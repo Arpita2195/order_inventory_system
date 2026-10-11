@@ -1,5 +1,4 @@
-USE stockflow_db;
-
+-- Select the target database before running this migration.
 START TRANSACTION;
 
 INSERT INTO inventory_transactions (product_id, change_qty, reason, order_id, note)

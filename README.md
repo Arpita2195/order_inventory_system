@@ -34,16 +34,18 @@ A full-stack order and inventory management application built with Node.js + Exp
 2. Update the database credentials in `backend/.env` to match your local MySQL instance.
    Set `JWT_SECRET` to a unique random value of at least 32 bytes. Never commit or share it.
 
-3. Create the database, import the schema and seed data, and apply migrations:
+3. Create the database, then import the schema and seed data and apply migrations. For local MySQL, create `stockflow_db` first and run each script with that database selected:
 
    ```bash
-   mysql -u root -p < backend/db/schema.sql
-   mysql -u root -p < backend/db/seed.sql
-   mysql -u root -p < backend/db/migrations/001_reconcile_inventory_transactions.sql
-   mysql -u root -p < backend/db/migrations/002_add_auth_users.sql
+   mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS stockflow_db"
+   mysql -u root -p --database=stockflow_db < backend/db/schema.sql
+   mysql -u root -p --database=stockflow_db < backend/db/seed.sql
+   mysql -u root -p --database=stockflow_db < backend/db/migrations/001_reconcile_inventory_transactions.sql
+   mysql -u root -p --database=stockflow_db < backend/db/migrations/002_add_auth_users.sql
    ```
 
    The demo seed is safe to rerun: it does not reset current stock or overwrite existing customer/order details, and it avoids adding duplicate sample order lines and movements. The stock-history migration is repeatable and doesn't change stock quantities.
+   For a managed MySQL service, create/select the provider's database first (Aiven's default database is commonly `defaultdb`) and run each script in that database. These scripts do not hard-code a database name.
 
 4. Install backend dependencies and create the first Admin account:
 

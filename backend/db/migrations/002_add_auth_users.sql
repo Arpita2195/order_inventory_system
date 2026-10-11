@@ -1,5 +1,4 @@
-USE stockflow_db;
-
+-- Select the target database before running this migration.
 CREATE TABLE IF NOT EXISTS app_users (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   email VARCHAR(255) NOT NULL,

@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS stockflow_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE stockflow_db;
+-- Select the target database before running this file.
+-- Example for local MySQL: CREATE DATABASE stockflow_db; then run with --database=stockflow_db.
 
 CREATE TABLE IF NOT EXISTS products (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

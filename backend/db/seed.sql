@@ -1,5 +1,3 @@
-USE stockflow_db;
-
 INSERT INTO products (sku, name, description, price, is_active) VALUES
   ('SKU-1001', 'Wireless Mouse', 'Ergonomic wireless mouse for office use.', 24.99, 1),
   ('SKU-1002', 'Mechanical Keyboard', 'Compact RGB keyboard with switch tuning.', 79.50, 1),

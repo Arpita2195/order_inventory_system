@@ -316,12 +316,12 @@ The existing ER diagram is in [`database-erd.md`](./database-erd.md).
 
 ### Database initialization and migrations
 
-- `backend/db/schema.sql` creates the `stockflow_db` schema and all current tables if they do not exist.
+- `backend/db/schema.sql` creates all current application tables in the database selected by the SQL client. For local MySQL, create and select `stockflow_db` first; for a managed database, select the provider-created database (for example, Aiven `defaultdb`).
 - `backend/db/seed.sql` adds demo products, customers, orders, order items, inventory, and movement history. Its inserts are designed to avoid overwriting existing sample/business data.
 - `backend/db/migrations/001_reconcile_inventory_transactions.sql` records any difference between current inventory balances and their recorded movements as an opening-balance adjustment; it does not change stock quantities.
 - `backend/db/migrations/002_add_auth_users.sql` creates the application account and setup-lock tables.
 
-For an existing installation, back up the database before schema changes. Confirm each SQL script selects `stockflow_db` before running it; do not run these scripts against a different schema by accident. The initial Admin is created with the application CLI, not a SQL insert.
+For an existing installation, back up the database before schema changes. Select the intended target database in Workbench or pass it explicitly to the MySQL CLI before running each SQL script; the scripts intentionally do not hard-code a database name. The initial Admin is created with the application CLI, not a SQL insert.
 
 ### View data in MySQL Workbench
 

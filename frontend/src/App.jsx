@@ -546,16 +546,16 @@ function UserManagementPage() {
             <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }} aria-label="Filter account status" className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><option value="all">All access</option><option value="active">Active</option><option value="inactive">Deactivated</option></select>
           </div></div>
           {loading ? <div className="p-8 text-slate-500">Loading accounts…</div> : (
-            <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="min-w-full divide-y divide-slate-200 text-left">
+            <div className="mobile-card-table-wrap overflow-x-auto rounded-xl border border-slate-200">
+              <table className="mobile-card-table min-w-full divide-y divide-slate-200 text-left">
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-3 py-3">Person</th><th className="px-3 py-3">Role</th><th className="px-3 py-3">Access</th><th className="px-3 py-3">Actions</th></tr></thead>
                 <tbody className="divide-y divide-slate-200 bg-white">
                   {users.map((account) => {
                     const isSelf = Number(account.id) === Number(currentUser.id);
-                    return <tr key={account.id} className="hover:bg-slate-50"><td className="px-3 py-3"><p className="text-sm font-medium text-slate-800">{account.display_name}{isSelf && <span className="ml-2 text-xs text-slate-400">You</span>}</p><p className="text-xs text-slate-500">{account.email}</p></td>
-                      <td className="px-3 py-3"><select value={account.role} disabled={isSelf} onChange={(event) => changeUser(account, { role: event.target.value })} className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs disabled:opacity-50"><option value="ADMIN">Admin</option><option value="STAFF">Staff</option></select></td>
-                      <td className="px-3 py-3"><StatusBadge status={account.is_active ? 'active' : 'inactive'} /></td>
-                      <td className="px-3 py-3"><button type="button" disabled={isSelf} onClick={() => changeUser(account, { isActive: !account.is_active })} className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">{account.is_active ? 'Deactivate' : 'Reactivate'}</button></td></tr>;
+                    return <tr key={account.id} className="hover:bg-slate-50"><td data-label="Person" className="px-3 py-3"><div className="min-w-0"><p className="text-sm font-medium text-slate-800">{account.display_name}{isSelf && <span className="ml-2 text-xs text-slate-400">You</span>}</p><p className="text-xs text-slate-500">{account.email}</p></div></td>
+                      <td data-label="Role" className="px-3 py-3"><select value={account.role} disabled={isSelf} onChange={(event) => changeUser(account, { role: event.target.value })} className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs disabled:opacity-50"><option value="ADMIN">Admin</option><option value="STAFF">Staff</option></select></td>
+                      <td data-label="Access" className="px-3 py-3"><StatusBadge status={account.is_active ? 'active' : 'inactive'} /></td>
+                      <td data-label="Actions" className="px-3 py-3"><button type="button" disabled={isSelf} onClick={() => changeUser(account, { isActive: !account.is_active })} className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">{account.is_active ? 'Deactivate' : 'Reactivate'}</button></td></tr>;
                   })}
                   {!users.length && <tr><td colSpan="4" className="px-3 py-8 text-center text-sm text-slate-500">No matching accounts.</td></tr>}
                 </tbody>
@@ -583,7 +583,7 @@ function UserManagementPage() {
 function Pagination({ page, total, totalPages, limit, onPageChange, onLimitChange }) {
   const pageCount = Math.max(1, totalPages || Math.ceil(total / limit));
   return (
-    <div className="flex items-center justify-between gap-3 px-1 pt-3 text-sm text-slate-500">
+    <div className="pagination-layout flex items-center justify-between gap-3 px-1 pt-3 text-sm text-slate-500">
       <div className="flex items-center gap-3">
         <span>{total ? `${(page - 1) * limit + 1}–${Math.min(page * limit, total)} of ${total}` : '0 records'}</span>
         <label className="flex items-center gap-1.5">Rows
@@ -592,7 +592,7 @@ function Pagination({ page, total, totalPages, limit, onPageChange, onLimitChang
           </select>
         </label>
       </div>
-      <div className="flex gap-2">
+      <div className="pagination-controls flex gap-2">
         <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)} className="rounded-lg border border-slate-200 px-3 py-1.5 disabled:opacity-40">Previous</button>
         <button type="button" disabled={page >= pageCount} onClick={() => onPageChange(page + 1)} className="rounded-lg border border-slate-200 px-3 py-1.5 disabled:opacity-40">Next</button>
       </div>
@@ -888,8 +888,8 @@ function ProductsPage() {
             </select>
           </div>
           {loading ? <div className="p-6 text-slate-500">Loading products…</div> : error ? <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">{error}</div> : (
-            <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="min-w-full divide-y divide-slate-200 text-left">
+            <div className="mobile-card-table-wrap overflow-x-auto rounded-xl border border-slate-200">
+              <table className="mobile-card-table min-w-full divide-y divide-slate-200 text-left">
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-3 py-3">SKU</th>
@@ -903,12 +903,12 @@ function ProductsPage() {
                 <tbody className="divide-y divide-slate-200 bg-white">
                   {products.map((product) => (
                     <tr key={product.id} className="hover:bg-slate-50">
-                      <td className="px-3 py-3 text-sm font-medium text-slate-800">{product.sku}</td>
-                      <td className="px-3 py-3 text-sm text-slate-700">{product.name}</td>
-                      <td className="px-3 py-3 text-sm text-slate-700">{currency.format(Number(product.price || 0))}</td>
-                      <td className="px-3 py-3 text-sm text-slate-700">{product.quantity_on_hand ?? 0}</td>
-                      <td className="px-3 py-3"><StatusBadge status={product.is_active === 1 ? 'active' : 'inactive'} /></td>
-                      <td className="px-3 py-3">
+                      <td data-label="SKU" className="px-3 py-3 text-sm font-medium text-slate-800">{product.sku}</td>
+                      <td data-label="Name" className="px-3 py-3 text-sm text-slate-700">{product.name}</td>
+                      <td data-label="Price" className="px-3 py-3 text-sm text-slate-700">{currency.format(Number(product.price || 0))}</td>
+                      <td data-label="Stock" className="px-3 py-3 text-sm text-slate-700">{product.quantity_on_hand ?? 0}</td>
+                      <td data-label="Status" className="px-3 py-3"><StatusBadge status={product.is_active === 1 ? 'active' : 'inactive'} /></td>
+                      <td data-label="Actions" className="px-3 py-3">
                         <button
                           className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
                           onClick={() => toggleStatus(product)}
@@ -1004,8 +1004,8 @@ function CustomersPage() {
           <input value={search} onChange={(e) => { const next = new URLSearchParams(searchParams); if (e.target.value) next.set('search', e.target.value); else next.delete('search'); setSearchParams(next, { replace: true }); setPage(1); }} className="mb-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm" placeholder="Search name or email" aria-label="Search customers" />
 
           {loading ? <div className="p-6 text-slate-500">Loading customers…</div> : (
-            <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="min-w-full divide-y divide-slate-200 text-left">
+            <div className="mobile-card-table-wrap overflow-x-auto rounded-xl border border-slate-200">
+              <table className="mobile-card-table min-w-full divide-y divide-slate-200 text-left">
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-3 py-3">Name</th>
@@ -1016,9 +1016,9 @@ function CustomersPage() {
                 <tbody className="divide-y divide-slate-200 bg-white">
                   {customers.map((customer) => (
                     <tr key={customer.id} className="hover:bg-slate-50">
-                      <td className="px-3 py-3 text-sm font-medium text-slate-800">{customer.name}</td>
-                      <td className="px-3 py-3 text-sm text-slate-700">{customer.email}</td>
-                      <td className="px-3 py-3 text-sm text-slate-700">{customer.phone || '—'}</td>
+                      <td data-label="Name" className="px-3 py-3 text-sm font-medium text-slate-800">{customer.name}</td>
+                      <td data-label="Email" className="px-3 py-3 text-sm text-slate-700">{customer.email}</td>
+                      <td data-label="Phone" className="px-3 py-3 text-sm text-slate-700">{customer.phone || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1136,8 +1136,8 @@ function InventoryPage() {
           </div>
 
           {loading ? <div className="p-6 text-slate-500">Loading inventory…</div> : (
-            <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="min-w-full divide-y divide-slate-200 text-left">
+            <div className="mobile-card-table-wrap overflow-x-auto rounded-xl border border-slate-200">
+              <table className="mobile-card-table min-w-full divide-y divide-slate-200 text-left">
                 <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-3 py-3">Product</th>
@@ -1150,11 +1150,11 @@ function InventoryPage() {
                 <tbody className="divide-y divide-slate-200 bg-white">
                   {inventory.map((item) => (
                     <tr key={item.id} className="hover:bg-slate-50">
-                      <td className="px-3 py-3 text-sm font-medium text-slate-800" onClick={() => setSelectedId(item.id)}>{item.name}</td>
-                      <td className="px-3 py-3 text-sm text-slate-700">{item.quantity_on_hand}</td>
-                      <td className="px-3 py-3 text-sm text-slate-700">{item.reorder_level}</td>
-                      <td className="px-3 py-3"><StatusBadge status={item.is_active !== 1 ? 'inactive' : item.is_low_stock ? 'low' : 'active'} /></td>
-                      <td className="space-x-2 px-3 py-3">
+                      <td data-label="Product" className="px-3 py-3 text-sm font-medium text-slate-800" onClick={() => setSelectedId(item.id)}>{item.name}</td>
+                      <td data-label="On hand" className="px-3 py-3 text-sm text-slate-700">{item.quantity_on_hand}</td>
+                      <td data-label="Reorder" className="px-3 py-3 text-sm text-slate-700">{item.reorder_level}</td>
+                      <td data-label="Status" className="px-3 py-3"><StatusBadge status={item.is_active !== 1 ? 'inactive' : item.is_low_stock ? 'low' : 'active'} /></td>
+                      <td data-label="Actions" className="space-x-2 px-3 py-3">
                         <button className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs text-slate-700 hover:bg-slate-50" onClick={() => restock(item.id)}>Restock</button>
                         <button className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs text-slate-700 hover:bg-slate-50" onClick={() => adjust(item.id)}>Adjust</button>
                       </td>
@@ -1276,8 +1276,8 @@ function OrdersPage() {
         <input value={search} onChange={(e) => updateOrderFilters('search', e.target.value)} className="mb-4 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm" placeholder="Search order number or customer" aria-label="Search orders" />
 
         {loading ? <div className="p-6 text-slate-500">Loading orders…</div> : (
-          <div className="overflow-x-auto rounded-xl border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200 text-left">
+          <div className="mobile-card-table-wrap overflow-x-auto rounded-xl border border-slate-200">
+            <table className="mobile-card-table min-w-full divide-y divide-slate-200 text-left">
               <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th className="px-3 py-3">Order</th>
@@ -1291,12 +1291,12 @@ function OrdersPage() {
               <tbody className="divide-y divide-slate-200 bg-white">
                 {orders.map((order) => (
                   <tr key={order.id} className="hover:bg-slate-50">
-                    <td className="px-3 py-3 text-sm font-medium text-[#446c55]"><Link to={`/orders/${order.id}`}>{order.order_number}</Link></td>
-                    <td className="px-3 py-3 text-sm text-slate-700">{order.customer_name}</td>
-                    <td className="px-3 py-3 text-sm text-slate-700">{new Date(order.created_at).toLocaleDateString()}</td>
-                    <td className="px-3 py-3 text-sm text-slate-700">{currency.format(Number(order.total_amount || 0))}</td>
-                    <td className="px-3 py-3"><StatusBadge status={order.status} /></td>
-                    <td className="space-x-2 px-3 py-3">
+                    <td data-label="Order" className="px-3 py-3 text-sm font-medium text-[#446c55]"><Link to={`/orders/${order.id}`}>{order.order_number}</Link></td>
+                    <td data-label="Customer" className="px-3 py-3 text-sm text-slate-700">{order.customer_name}</td>
+                    <td data-label="Date" className="px-3 py-3 text-sm text-slate-700">{new Date(order.created_at).toLocaleDateString()}</td>
+                    <td data-label="Total" className="px-3 py-3 text-sm text-slate-700">{currency.format(Number(order.total_amount || 0))}</td>
+                    <td data-label="Status" className="px-3 py-3"><StatusBadge status={order.status} /></td>
+                    <td data-label="Actions" className="space-x-2 px-3 py-3">
                       {nextStatusMap[order.status] && (
                         <button className="rounded-lg bg-[#315b48] px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-[#26493e]" onClick={() => handleStatusAdvance(order)}>
                           {nextStatusMap[order.status]}

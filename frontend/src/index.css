@@ -1381,6 +1381,62 @@ select:focus-visible {
   border-top: 1px solid #eff1ec;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .dashboard-panel,
+  .dashboard-kpi,
+  .team-intro {
+    transform-style: preserve-3d;
+    transition: transform .24s ease, box-shadow .24s ease;
+  }
+
+  .dashboard-panel:hover,
+  .team-intro:hover {
+    transform: perspective(1000px) rotateX(.35deg) rotateY(-.35deg) translateY(-2px);
+    box-shadow: 0 14px 34px rgba(47, 58, 48, .08);
+  }
+
+  .dashboard-kpi:hover {
+    transform: perspective(800px) rotateX(1deg) rotateY(-1deg) translateY(-3px);
+  }
+}
+
+.mobile-card-table-wrap {
+  min-width: 0;
+}
+
+.auth-submit,
+.hero-primary-action,
+.header-icon-button,
+.admin-trigger,
+.panel-icon-link,
+.team-form-label input,
+.team-form-label select {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.auth-submit:hover,
+.hero-primary-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(38, 73, 62, .16);
+}
+
+.dashboard-hero {
+  isolation: isolate;
+}
+
+.hero-orbit {
+  animation: orbit-drift 24s ease-in-out infinite alternate;
+}
+
+.orbit-two {
+  animation-delay: -12s;
+}
+
+@keyframes orbit-drift {
+  from { transform: translate3d(-8px, 5px, 0) rotate(-5deg); }
+  to { transform: translate3d(12px, -8px, 0) rotate(7deg); }
+}
+
 @media (max-width: 1100px) {
   .dashboard-chart-grid {
     grid-template-columns: 1fr;
@@ -1583,6 +1639,192 @@ select:focus-visible {
   .team-total {
     margin-left: 53px;
   }
+
+  .mobile-card-table-wrap {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .mobile-card-table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0 9px;
+  }
+
+  .mobile-card-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .mobile-card-table tbody {
+    display: grid;
+    gap: 10px;
+    background: transparent;
+  }
+
+  .mobile-card-table tbody.divide-y > :not(:last-child) {
+    border-bottom: 0;
+  }
+
+  .mobile-card-table tbody tr {
+    display: block;
+    min-width: 0;
+    padding: 5px 12px;
+    overflow: hidden;
+    border: 1px solid #e8e9e2;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(47, 58, 48, .035);
+  }
+
+  .mobile-card-table tbody td {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 2px;
+    border-bottom: 1px solid #eff1ec;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .mobile-card-table tbody td:last-child {
+    border-bottom: 0;
+  }
+
+  .mobile-card-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 76px;
+    color: #89958c;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .mobile-card-table tbody td > :not(:first-child) {
+    min-width: 0;
+  }
+
+  .mobile-card-table tbody td[colspan] {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .mobile-card-table tbody td[colspan]::before {
+    display: none;
+  }
+
+  .mobile-card-table tbody td[data-label="Actions"] {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .mobile-card-table tbody td[data-label="Actions"] button {
+    min-height: 36px;
+  }
+
+  .mobile-card-table tbody td[data-label="Actions"]::before {
+    margin-right: auto;
+  }
+
+  .mobile-card-table tbody td[data-label="Status"] > *,
+  .mobile-card-table tbody td[data-label="Access"] > * {
+    margin-left: auto;
+  }
+
+  .team-intro {
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .team-intro > div:nth-child(2) {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .team-intro p {
+    overflow-wrap: anywhere;
+  }
+
+  .team-total {
+    width: 100%;
+    margin-left: 50px;
+  }
+
+  .team-intro-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .pagination-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .pagination-layout > div:first-child {
+    justify-content: space-between;
+  }
+
+  .pagination-controls {
+    justify-content: space-between;
+  }
+
+  .pagination-controls button {
+    min-height: 40px;
+    padding-inline: 9px;
+    font-size: 12px;
+  }
+
+  .panel-heading {
+    flex-wrap: wrap;
+  }
+
+  .sales-panel .panel-heading {
+    align-items: flex-start;
+  }
+
+  .chart-summary {
+    max-width: 45%;
+  }
+
+  .chart-summary strong {
+    overflow-wrap: anywhere;
+    text-align: right;
+  }
+
+  .order-mix-panel .donut-wrap {
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .order-legend {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .dashboard-table {
+    min-width: 0;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    padding-inline: 6px;
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 360px) {
@@ -1642,6 +1884,21 @@ select:focus-visible {
   .dashboard-kpi {
     padding: 10px;
   }
+
+  .mobile-card-table tbody tr {
+    padding-inline: 9px;
+  }
+
+  .mobile-card-table tbody td {
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .mobile-card-table tbody td::before {
+    flex-basis: 66px;
+    font-size: 9px;
+  }
+
 }
 
 @media (prefers-reduced-motion: reduce) {

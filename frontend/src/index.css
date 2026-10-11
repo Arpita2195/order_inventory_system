@@ -22,12 +22,13 @@ html {
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   min-height: 100vh;
   background: #f5f5f1;
 }
 
 #root {
+  width: 100%;
   min-height: 100vh;
 }
 
@@ -51,6 +52,8 @@ select:focus-visible {
 }
 
 .app-frame {
+  min-width: 0;
+  overflow-x: clip;
   background:
     radial-gradient(ellipse at 82% 3%, rgba(227, 232, 219, .32), transparent 28rem),
     #f5f5f1;
@@ -98,8 +101,20 @@ select:focus-visible {
 
 .app-main {
   width: 100%;
+  min-width: 0;
   max-width: 1680px;
   margin-inline: auto;
+}
+
+.page-header {
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.page-header > :last-child {
+  max-width: 100%;
+  color: #758078;
+  font-size: 13px;
 }
 
 .header-control-wrap {
@@ -417,7 +432,7 @@ select:focus-visible {
 .auth-screen {
   display: grid;
   min-height: 100vh;
-  grid-template-columns: minmax(430px, .9fr) minmax(480px, 1.1fr);
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
   background: #f7f7f3;
 }
 
@@ -1368,7 +1383,11 @@ select:focus-visible {
 
 @media (max-width: 1100px) {
   .dashboard-chart-grid {
-    grid-template-columns: minmax(0, 1.35fr) minmax(270px, .85fr);
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-bottom-grid {
+    grid-template-columns: 1fr;
   }
 
   .dashboard-hero {
@@ -1384,6 +1403,14 @@ select:focus-visible {
   .dashboard-chart-grid,
   .dashboard-bottom-grid {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mobile-nav {
+    grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
   }
 
   .order-mix-panel {
@@ -1410,6 +1437,18 @@ select:focus-visible {
 @media (max-width: 640px) {
   .app-main {
     padding: 16px;
+  }
+
+  .app-header-eyebrow {
+    display: none;
+  }
+
+  .page-header > :last-child {
+    text-align: left;
+  }
+
+  .mobile-nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .header-search {
@@ -1543,6 +1582,65 @@ select:focus-visible {
 
   .team-total {
     margin-left: 53px;
+  }
+}
+
+@media (max-width: 360px) {
+  .app-main {
+    padding: 12px;
+  }
+
+  .app-header > div {
+    padding-inline: 10px;
+  }
+
+  .app-header .brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .mobile-nav {
+    gap: 4px;
+    padding-inline: 8px;
+  }
+
+  .mobile-nav a {
+    font-size: 9px;
+  }
+
+  .app-header > div > .flex:last-child {
+    gap: 4px;
+  }
+
+  .header-icon-button,
+  .admin-trigger {
+    width: 34px;
+    height: 34px;
+  }
+
+  .admin-trigger {
+    padding: 0;
+  }
+
+  .admin-trigger .admin-avatar {
+    width: 25px;
+    height: 25px;
+  }
+
+  .auth-card {
+    padding-inline: 18px;
+  }
+
+  .auth-heading h1 {
+    font-size: 34px;
+  }
+
+  .dashboard-kpi-grid {
+    gap: 7px;
+  }
+
+  .dashboard-kpi {
+    padding: 10px;
   }
 }
 

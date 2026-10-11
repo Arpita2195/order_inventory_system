@@ -317,7 +317,7 @@ function AppShell({ toast }) {
                   </div>
                 </div>
                 <div>
-                  <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Operations workspace</div>
+                  <div className="app-header-eyebrow text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Operations workspace</div>
                   <div className="text-[15px] font-semibold tracking-tight text-slate-800">StockFlow</div>
                 </div>
               </div>
@@ -424,18 +424,19 @@ function AppShell({ toast }) {
             </div>
           </header>
 
-          <nav className="flex gap-2 overflow-x-auto border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
-            {navItems.map(({ to, label }) => (
+          <nav aria-label="Main navigation" className="mobile-nav grid grid-cols-4 gap-1.5 border-b border-slate-200 bg-white px-3 py-2 lg:hidden">
+            {navItems.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
                 className={({ isActive }) =>
-                  `shrink-0 rounded-lg px-3 py-2 text-sm font-medium ${
+                  `flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-lg px-1.5 py-2 text-center text-[11px] font-medium leading-tight ${
                     isActive ? 'bg-[#edf2ec] text-[#24483d]' : 'text-slate-600 hover:bg-[#f3f4ef]'
                   }`
                 }
               >
-                {label}
+                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="w-full break-words">{label}</span>
               </NavLink>
             ))}
           </nav>
@@ -601,7 +602,7 @@ function Pagination({ page, total, totalPages, limit, onPageChange, onLimitChang
 
 function PageHeader({ title, subtitle }) {
   return (
-    <div className="mb-6 flex items-center justify-between">
+    <div className="page-header mb-6 flex items-center justify-between">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#527567]">Overview</p>
         <h1 className="mt-1 text-2xl font-semibold text-slate-900">{title}</h1>

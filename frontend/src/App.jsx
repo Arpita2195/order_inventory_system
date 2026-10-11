@@ -41,9 +41,13 @@ const getAllPages = async (fetchPage, filters = {}) => {
   const firstPage = await fetchPage({ ...filters, page: 1, limit: ORDER_FORM_PAGE_SIZE });
   const items = [...(firstPage.items || [])];
   const totalPages = firstPage.pagination?.totalPages || 1;
-  for (let page = 2; page <= totalPages; page += 1) {
-    const result = await fetchPage({ ...filters, page, limit: ORDER_FORM_PAGE_SIZE });
-    items.push(...(result.items || []));
+  for (let page = 2; page <= totalPages; page += 5) {
+    const pages = await Promise.all(
+      Array.from({ length: Math.min(5, totalPages - page + 1) }, (_, index) =>
+        fetchPage({ ...filters, page: page + index, limit: ORDER_FORM_PAGE_SIZE })
+      )
+    );
+    pages.forEach((result) => items.push(...(result.items || [])));
   }
   return items;
 };
@@ -475,6 +479,7 @@ function UserManagementPage() {
   const notify = useNotify();
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState([]);
+  const hasLoadedRef = useRef(false);
   const [pagination, setPagination] = useState({ total: 0, totalPages: 0 });
   const [search, setSearch] = useState('');
   const [role, setRole] = useState('all');
@@ -487,12 +492,13 @@ function UserManagementPage() {
   const [form, setForm] = useState({ email: '', displayName: '', password: '', role: 'STAFF' });
 
   const loadUsers = useCallback(async () => {
-    setLoading(true);
+    setLoading(!hasLoadedRef.current);
     try {
       const result = await getUsers({ search, role, status, page, limit });
       setUsers(result.items || []);
       setPagination(result.pagination || { total: 0, totalPages: 0 });
       setError('');
+      hasLoadedRef.current = true;
     } catch (loadError) {
       setError(loadError.message || 'Unable to load team accounts.');
     } finally {
@@ -501,7 +507,6 @@ function UserManagementPage() {
   }, [search, role, status, page, limit]);
 
   // Load accounts when a server-side filter or page changes.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadUsers(); }, [loadUsers]);
 
   const submit = async (event) => {
@@ -810,6 +815,7 @@ function ProductsPage() {
   const notify = useNotify();
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
+  const hasLoadedRef = useRef(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const search = searchParams.get('search') || '';
@@ -822,11 +828,12 @@ function ProductsPage() {
 
   const loadProducts = useCallback(async () => {
     try {
-      setLoading(true);
+      setLoading(!hasLoadedRef.current);
       const data = await getProducts({ search, status, page, limit });
       setProducts(data.items || []);
       setPagination(data.pagination || { total: 0, totalPages: 0 });
       setError('');
+      hasLoadedRef.current = true;
     } catch (err) {
       setError(err.message || 'Unable to load products');
     } finally {
@@ -834,7 +841,6 @@ function ProductsPage() {
     }
   }, [search, status, page, limit]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadProducts(); }, [loadProducts]);
   const updateProductFilters = (key, value) => {
     const next = new URLSearchParams(searchParams);
@@ -950,6 +956,7 @@ function CustomersPage() {
   const notify = useNotify();
   const [searchParams, setSearchParams] = useSearchParams();
   const [customers, setCustomers] = useState([]);
+  const hasLoadedRef = useRef(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const search = searchParams.get('search') || '';
@@ -961,11 +968,12 @@ function CustomersPage() {
 
   const loadCustomers = useCallback(async () => {
     try {
-      setLoading(true);
+      setLoading(!hasLoadedRef.current);
       const data = await getCustomers({ search, page, limit });
       setCustomers(data.items || []);
       setPagination(data.pagination || { total: 0, totalPages: 0 });
       setError('');
+      hasLoadedRef.current = true;
     } catch (err) {
       setError(err.message || 'Unable to load customers');
     } finally {
@@ -973,7 +981,6 @@ function CustomersPage() {
     }
   }, [search, page, limit]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadCustomers(); }, [loadCustomers]);
 
   const submitCustomer = async (e) => {
@@ -1047,6 +1054,7 @@ function CustomersPage() {
 function InventoryPage() {
   const notify = useNotify();
   const [inventory, setInventory] = useState([]);
+  const hasLoadedRef = useRef(false);
   const [lowStock, setLowStock] = useState([]);
   const [history, setHistory] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -1061,7 +1069,7 @@ function InventoryPage() {
 
   const loadData = useCallback(async () => {
     try {
-      setLoading(true);
+      setLoading(!hasLoadedRef.current);
       const [rows, low] = await Promise.all([
         getInventory({ search, status, page, limit }),
         getLowStock()
@@ -1069,15 +1077,15 @@ function InventoryPage() {
       setInventory(rows.items || []);
       setPagination(rows.pagination || { total: 0, totalPages: 0 });
       setLowStock(low || []);
-      if (!selectedId && rows.items?.[0]) setSelectedId(rows.items[0].id);
+      setSelectedId((currentId) => currentId || rows.items?.[0]?.id || null);
+      hasLoadedRef.current = true;
     } catch (err) {
       setError(err.message || 'Unable to load inventory');
     } finally {
       setLoading(false);
     }
-  }, [search, status, page, limit, selectedId]);
+  }, [search, status, page, limit]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadData(); }, [loadData]);
 
   useEffect(() => {
@@ -1195,6 +1203,7 @@ function OrdersPage() {
   const notify = useNotify();
   const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
+  const hasLoadedRef = useRef(false);
   const selectedStatus = searchParams.get('status') || 'all';
   const search = searchParams.get('search') || '';
   const [page, setPage] = useState(1);
@@ -1204,12 +1213,13 @@ function OrdersPage() {
   const [error, setError] = useState('');
 
   const loadOrders = useCallback(async () => {
-    setLoading(true);
+    setLoading(!hasLoadedRef.current);
     try {
       const data = await getOrders({ status: selectedStatus, search, page, limit });
       setOrders(data.items || []);
       setPagination(data.pagination || { total: 0, totalPages: 0 });
       setError('');
+      hasLoadedRef.current = true;
     } catch (err) {
       setError(err.message || 'Unable to load orders');
     } finally {
@@ -1217,7 +1227,6 @@ function OrdersPage() {
     }
   }, [selectedStatus, search, page, limit]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { loadOrders(); }, [loadOrders]);
   const updateOrderFilters = (key, value) => {
     const next = new URLSearchParams(searchParams);

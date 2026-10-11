@@ -1,7 +1,7 @@
-import api from './client';
+import api, { getCached } from './client';
 
 export const getCustomers = (params = {}) =>
-  api.get('/customers', { params }).then((res) => res.data.data);
+  getCached('/customers', params);
 
 export const createCustomer = (payload) =>
   api.post('/customers', payload).then((res) => res.data.data);

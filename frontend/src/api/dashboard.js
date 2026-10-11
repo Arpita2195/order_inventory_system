@@ -1,3 +1,3 @@
-import api from './client';
+import { getCached } from './client';
 
-export const getDashboardSummary = () => api.get('/dashboard/summary').then((res) => res.data.data);
+export const getDashboardSummary = () => getCached('/dashboard/summary');

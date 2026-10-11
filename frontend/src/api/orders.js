@@ -1,10 +1,10 @@
-import api from './client';
+import api, { getCached } from './client';
 
 export const getOrders = (params = {}) =>
-  api.get('/orders', { params }).then((res) => res.data.data);
+  getCached('/orders', params);
 
 export const getOrder = (id) =>
-  api.get(`/orders/${id}`).then((res) => res.data.data);
+  getCached(`/orders/${id}`);
 
 export const createOrder = (payload) =>
   api.post('/orders', payload).then((res) => res.data.data);

@@ -1,7 +1,7 @@
-import api from './client';
+import api, { getCached } from './client';
 
 export const getProducts = (params = {}) =>
-  api.get('/products', { params }).then((res) => res.data.data);
+  getCached('/products', params);
 
 export const createProduct = (payload) =>
   api.post('/products', payload).then((res) => res.data.data);

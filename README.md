@@ -18,6 +18,14 @@ A full-stack order and inventory management application built with Node.js + Exp
 - Backend: Node.js, Express, MySQL, Zod
 - Frontend: React, Vite, Axios, React Router
 
+## Deployment
+
+- **Live app (Vercel frontend):** [Open StockFlow](https://stockflow-git-main-arpita2195s-projects.vercel.app/)
+- **Backend API:** Deployed on Render.
+- **MySQL database:** Hosted on Aiven.io Cloud.
+
+The Vercel frontend connects to the Render API, which connects to MySQL on Aiven Cloud. Configure the API URL in the frontend deployment and the database connection and TLS settings in the Render environment variables.
+
 ## Project structure
 
 - `backend/` — Express API and MySQL schema setup

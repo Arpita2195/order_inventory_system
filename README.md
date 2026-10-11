@@ -1,4 +1,4 @@
-# Order & Inventory Management System
+# StockFlow — Order & Inventory Management System
 
 A full-stack order and inventory management application built with Node.js + Express and React + Vite.
 

@@ -1203,6 +1203,7 @@ function OrdersPage() {
   const notify = useNotify();
   const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
+  const [pendingOrderActionId, setPendingOrderActionId] = useState(null);
   const hasLoadedRef = useRef(false);
   const selectedStatus = searchParams.get('status') || 'all';
   const search = searchParams.get('search') || '';
@@ -1244,24 +1245,31 @@ function OrdersPage() {
 
   const handleStatusAdvance = async (order) => {
     const next = nextStatusMap[order.status];
-    if (!next) return;
+    if (!next || pendingOrderActionId !== null) return;
+    setPendingOrderActionId(order.id);
     try {
       await updateOrderStatus(order.id, next);
       await loadOrders();
       notify(`Order moved to ${next}`);
     } catch (err) {
       notify(err.message || 'Unable to update status', 'error');
+    } finally {
+      setPendingOrderActionId(null);
     }
   };
 
   const handleCancel = async (order) => {
     if (!window.confirm(`Cancel order ${order.order_number}?`)) return;
+    if (pendingOrderActionId !== null) return;
+    setPendingOrderActionId(order.id);
     try {
       await cancelOrder(order.id);
       await loadOrders();
       notify('Order cancelled successfully');
     } catch (err) {
       notify(err.message || 'Unable to cancel order', 'error');
+    } finally {
+      setPendingOrderActionId(null);
     }
   };
 
@@ -1307,13 +1315,15 @@ function OrdersPage() {
                     <td data-label="Status" className="px-3 py-3"><StatusBadge status={order.status} /></td>
                     <td data-label="Actions" className="space-x-2 px-3 py-3">
                       {nextStatusMap[order.status] && (
-                        <button className="rounded-lg bg-[#315b48] px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-[#26493e]" onClick={() => handleStatusAdvance(order)}>
-                          {nextStatusMap[order.status]}
+                        <button type="button" disabled={pendingOrderActionId !== null} aria-live="polite" className="inline-flex items-center gap-1.5 rounded-lg bg-[#315b48] px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-[#26493e] disabled:cursor-wait disabled:opacity-70" onClick={() => handleStatusAdvance(order)}>
+                          {pendingOrderActionId === order.id && <RefreshCw className="h-3 w-3 animate-spin" aria-hidden="true" />}
+                          {pendingOrderActionId === order.id ? 'Updating…' : nextStatusMap[order.status]}
                         </button>
                       )}
                       {['PENDING', 'CONFIRMED'].includes(order.status) && (
-                        <button className="rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50" onClick={() => handleCancel(order)}>
-                          Cancel
+                        <button type="button" disabled={pendingOrderActionId !== null} aria-live="polite" className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-50 disabled:cursor-wait disabled:opacity-70" onClick={() => handleCancel(order)}>
+                          {pendingOrderActionId === order.id && <RefreshCw className="h-3 w-3 animate-spin" aria-hidden="true" />}
+                          {pendingOrderActionId === order.id ? 'Cancelling…' : 'Cancel'}
                         </button>
                       )}
                     </td>

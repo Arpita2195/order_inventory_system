@@ -12,8 +12,11 @@ import {
   DollarSign,
   HelpCircle,
   LayoutDashboard,
+  Loader2,
   LogOut,
   Package,
+  PanelLeftClose,
+  PanelLeftOpen,
   Plus,
   RefreshCw,
   Search,
@@ -176,6 +179,26 @@ function LoginPage() {
 function AppShell({ toast }) {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('stockflow.sidebarCollapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('stockflow.sidebarCollapsed', String(next));
+      } catch {
+        // Storage access may be restricted in private browsing
+      }
+      return next;
+    });
+  };
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -282,30 +305,65 @@ function AppShell({ toast }) {
   return (
     <div className="app-frame min-h-screen text-slate-900">
       <div className="flex min-h-screen">
-        <aside className="app-sidebar hidden w-72 border-r border-slate-200 bg-white lg:flex lg:flex-col">
-          <div className="flex items-center gap-3 border-b border-slate-200 px-6 py-5">
-            <div className="brand-mark flex h-10 w-10 items-center justify-center rounded-xl">
-              <Boxes className="h-5 w-5" strokeWidth={1.8} />
-            </div>
-            <div>
-              <div className="text-lg font-semibold">StockFlow</div>
-              <div className="text-xs text-slate-500">Inventory Hub</div>
-            </div>
+        <aside
+          className={`app-sidebar hidden ${
+            sidebarCollapsed ? 'w-16' : 'w-60'
+          } border-r border-slate-200/90 bg-white lg:flex lg:flex-col shrink-0 transition-all duration-200 ease-in-out`}
+        >
+          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center px-2 py-4' : 'justify-between px-4 py-4'} border-b border-slate-200/80`}>
+            {sidebarCollapsed ? (
+              <button
+                type="button"
+                onClick={toggleSidebar}
+                title="Expand sidebar"
+                aria-label="Expand sidebar"
+                className="group flex flex-col items-center gap-1 rounded-xl p-1 text-slate-600 hover:bg-[#edf2ec] hover:text-[#24483d] transition-colors"
+              >
+                <div className="brand-mark flex h-9 w-9 items-center justify-center rounded-xl group-hover:scale-105 transition-transform">
+                  <Boxes className="h-5 w-5" strokeWidth={2} />
+                </div>
+                <PanelLeftOpen className="h-3.5 w-3.5 text-slate-400 group-hover:text-[#24483d]" />
+              </button>
+            ) : (
+              <>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="brand-mark flex h-9 w-9 shrink-0 items-center justify-center rounded-xl">
+                    <Boxes className="h-5 w-5" strokeWidth={1.8} />
+                  </div>
+                  <div className="min-w-0 truncate">
+                    <div className="text-[15px] font-bold text-slate-900 leading-tight">StockFlow</div>
+                    <div className="text-[11px] font-medium text-slate-500">Inventory Hub</div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={toggleSidebar}
+                  title="Collapse sidebar"
+                  aria-label="Collapse sidebar"
+                  className="rounded-lg p-1.5 text-slate-400 hover:bg-[#edf2ec] hover:text-[#24483d] transition-colors"
+                >
+                  <PanelLeftClose className="h-4 w-4" />
+                </button>
+              </>
+            )}
           </div>
 
-          <nav className="flex-1 space-y-2 p-4">
+          <nav className="flex-1 space-y-1.5 p-2.5">
             {navItems.map(({ to, label, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
+                title={sidebarCollapsed ? label : undefined}
                 className={({ isActive }) =>
-                  `app-nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                    isActive ? 'bg-[#edf2ec] text-[#24483d] shadow-sm ring-1 ring-[#e0e9df]' : 'text-slate-600 hover:bg-[#f3f4ef]'
+                  `app-nav-link flex items-center ${
+                    sidebarCollapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5'
+                  } rounded-xl text-sm font-medium transition ${
+                    isActive ? 'bg-[#edf2ec] text-[#24483d] font-bold shadow-sm ring-1 ring-[#e0e9df]' : 'text-slate-600 hover:bg-[#f3f4ef]'
                   }`
                 }
               >
-                <Icon className="h-4 w-4" />
-                {label}
+                <Icon className="h-4 w-4 shrink-0" strokeWidth={2} />
+                {!sidebarCollapsed && <span className="truncate">{label}</span>}
               </NavLink>
             ))}
           </nav>
@@ -314,15 +372,24 @@ function AppShell({ toast }) {
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="app-header border-b border-slate-200 bg-white/90 backdrop-blur-sm">
             <div className="flex items-center justify-between px-4 py-3.5 sm:px-7">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={toggleSidebar}
+                  title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                  aria-label="Toggle sidebar"
+                  className="hidden lg:flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200/90 text-slate-600 hover:bg-[#edf2ec] hover:text-[#24483d] hover:border-[#cbdad0] transition-colors"
+                >
+                  {sidebarCollapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+                </button>
                 <div className="lg:hidden">
                   <div className="brand-mark flex h-10 w-10 items-center justify-center rounded-xl">
                     <Boxes className="h-5 w-5" />
                   </div>
                 </div>
                 <div>
-                  <div className="app-header-eyebrow text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Operations workspace</div>
-                  <div className="text-[15px] font-semibold tracking-tight text-slate-800">StockFlow</div>
+                  <div className="app-header-eyebrow text-[10px] font-bold uppercase tracking-[0.2em] text-[#3d6350]">Operations workspace</div>
+                  <div className="text-[15px] font-bold tracking-tight text-slate-900">StockFlow</div>
                 </div>
               </div>
 
@@ -547,8 +614,8 @@ function UserManagementPage() {
         <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="text-lg font-semibold">Workspace accounts</h2><div className="flex flex-wrap gap-2">
             <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="Search people" aria-label="Search user accounts" className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm" />
-            <select value={role} onChange={(event) => { setRole(event.target.value); setPage(1); }} aria-label="Filter account role" className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><option value="all">All roles</option><option value="ADMIN">Admin</option><option value="STAFF">Staff</option></select>
-            <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }} aria-label="Filter account status" className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm"><option value="all">All access</option><option value="active">Active</option><option value="inactive">Deactivated</option></select>
+            <select value={role} onChange={(event) => { setRole(event.target.value); setPage(1); }} aria-label="Filter account role" className="theme-select text-sm py-2 px-3"><option value="all">All roles</option><option value="ADMIN">Admin</option><option value="STAFF">Staff</option></select>
+            <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }} aria-label="Filter account status" className="theme-select text-sm py-2 px-3"><option value="all">All access</option><option value="active">Active</option><option value="inactive">Deactivated</option></select>
           </div></div>
           {loading ? <div className="p-8 text-slate-500">Loading accounts…</div> : (
             <div className="mobile-card-table-wrap overflow-x-auto rounded-xl border border-slate-200">
@@ -558,7 +625,7 @@ function UserManagementPage() {
                   {users.map((account) => {
                     const isSelf = Number(account.id) === Number(currentUser.id);
                     return <tr key={account.id} className="hover:bg-slate-50"><td data-label="Person" className="px-3 py-3"><div className="min-w-0"><p className="text-sm font-medium text-slate-800">{account.display_name}{isSelf && <span className="ml-2 text-xs text-slate-400">You</span>}</p><p className="text-xs text-slate-500">{account.email}</p></div></td>
-                      <td data-label="Role" className="px-3 py-3"><select value={account.role} disabled={isSelf} onChange={(event) => changeUser(account, { role: event.target.value })} className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-xs disabled:opacity-50"><option value="ADMIN">Admin</option><option value="STAFF">Staff</option></select></td>
+                      <td data-label="Role" className="px-3 py-3"><select value={account.role} disabled={isSelf} onChange={(event) => changeUser(account, { role: event.target.value })} className="theme-select text-xs py-1.5 px-2 disabled:opacity-50"><option value="ADMIN">Admin</option><option value="STAFF">Staff</option></select></td>
                       <td data-label="Access" className="px-3 py-3"><StatusBadge status={account.is_active ? 'active' : 'inactive'} /></td>
                       <td data-label="Actions" className="px-3 py-3"><button type="button" disabled={isSelf} onClick={() => changeUser(account, { isActive: !account.is_active })} className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">{account.is_active ? 'Deactivate' : 'Reactivate'}</button></td></tr>;
                   })}
@@ -576,7 +643,7 @@ function UserManagementPage() {
             <label className="team-form-label">Name<input value={form.displayName} onChange={(event) => setForm({ ...form, displayName: event.target.value })} minLength="2" maxLength="120" autoComplete="name" required /></label>
             <label className="team-form-label">Email<input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} autoComplete="email" required /></label>
             <label className="team-form-label">Temporary password<input type="password" value={form.password} onChange={(event) => setForm({ ...form, password: event.target.value })} minLength="12" maxLength="128" autoComplete="new-password" required /><small>Use at least 12 characters.</small></label>
-            <label className="team-form-label">Role<select value={form.role} onChange={(event) => setForm({ ...form, role: event.target.value })}><option value="STAFF">Staff</option><option value="ADMIN">Admin</option></select></label>
+            <label className="team-form-label">Role<select value={form.role} onChange={(event) => setForm({ ...form, role: event.target.value })} className="theme-select"><option value="STAFF">Staff</option><option value="ADMIN">Admin</option></select></label>
             <button type="submit" disabled={saving} className="w-full rounded-xl bg-[#315b48] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#26493e] disabled:opacity-60">{saving ? 'Creating account…' : 'Create account'}</button>
           </form>
         </section>
@@ -592,7 +659,7 @@ function Pagination({ page, total, totalPages, limit, onPageChange, onLimitChang
       <div className="flex items-center gap-3">
         <span>{total ? `${(page - 1) * limit + 1}–${Math.min(page * limit, total)} of ${total}` : '0 records'}</span>
         <label className="flex items-center gap-1.5">Rows
-          <select value={limit} onChange={(event) => onLimitChange(Number(event.target.value))} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700">
+          <select value={limit} onChange={(event) => onLimitChange(Number(event.target.value))} className="theme-select text-xs py-1 px-2.5">
             {[10, 25, 50].map((size) => <option key={size} value={size}>{size}</option>)}
           </select>
         </label>
@@ -622,34 +689,34 @@ function KpiCard({ title, value, detail, accent, icon: Icon }) {
     <div className="dashboard-kpi">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-[13px] font-medium text-slate-500">{title}</p>
-          <p className="mt-2 text-[27px] font-semibold tracking-tight text-slate-900">{value}</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-slate-700">{title}</p>
+          <p className="mt-1.5 text-[28px] sm:text-[32px] font-extrabold tracking-tight text-slate-950 tabular-nums">{value}</p>
         </div>
-        <div className={`dashboard-kpi-icon ${accent}`}>
-          <Icon className="h-5 w-5" />
+        <div className={`dashboard-kpi-icon ${accent} shadow-sm`}>
+          <Icon className="h-5 w-5" strokeWidth={2.2} />
         </div>
       </div>
-      <p className="mt-3 border-t border-slate-100 pt-3 text-xs text-slate-500">{detail}</p>
+      <p className="mt-3 border-t border-slate-100 pt-2.5 text-xs font-semibold text-slate-600">{detail}</p>
     </div>
   );
 }
 
 function StatusBadge({ status }) {
   const palette = {
-    PENDING: 'bg-amber-100 text-amber-700',
-    CONFIRMED: 'bg-blue-100 text-blue-700',
-    SHIPPED: 'bg-[#edf3ed] text-[#466d57]',
-    DELIVERED: 'bg-emerald-100 text-emerald-700',
-    CANCELLED: 'bg-rose-100 text-rose-700',
-    ACTIVE: 'bg-emerald-100 text-emerald-700',
-    INACTIVE: 'bg-slate-200 text-slate-700',
-    LOW: 'bg-amber-100 text-amber-700'
+    PENDING: 'bg-amber-50 text-amber-900 border border-amber-300 ring-1 ring-amber-200/50',
+    CONFIRMED: 'bg-sky-50 text-sky-900 border border-sky-300 ring-1 ring-sky-200/50',
+    SHIPPED: 'bg-[#edf5ee] text-[#143d26] border border-[#b4d4bd] ring-1 ring-[#cce2d3]/50',
+    DELIVERED: 'bg-emerald-50 text-emerald-900 border border-emerald-300 ring-1 ring-emerald-200/50',
+    CANCELLED: 'bg-rose-50 text-rose-900 border border-rose-300 ring-1 ring-rose-200/50',
+    ACTIVE: 'bg-emerald-50 text-emerald-900 border border-emerald-300 ring-1 ring-emerald-200/50',
+    INACTIVE: 'bg-slate-100 text-slate-800 border border-slate-300',
+    LOW: 'bg-amber-50 text-amber-900 border border-amber-300 ring-1 ring-amber-200/50'
   };
 
   const normalized = String(status).toUpperCase();
-  const className = palette[normalized] || 'bg-slate-100 text-slate-700';
+  const className = palette[normalized] || 'bg-slate-100 text-slate-800 border border-slate-200';
 
-  return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${className}`}>{normalized}</span>;
+  return <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-extrabold tracking-wider ${className}`}>{normalized}</span>;
 }
 
 function DashboardPage() {
@@ -782,10 +849,10 @@ function DashboardPage() {
               <thead><tr><th>ORDER</th><th>CUSTOMER</th><th>AMOUNT</th><th>STATUS</th></tr></thead>
               <tbody>
                 {(summary?.recentOrders || []).slice(0, 6).map((order) => (
-                  <tr key={order.id}>
+                  <tr key={order.id} className="hover:bg-[#f6f9f6] transition-colors">
                     <td><Link to={`/orders/${order.id}`} className="dashboard-order-link">{order.order_number}</Link></td>
-                    <td className="text-slate-600">{order.customer_name}</td>
-                    <td className="font-medium text-slate-800">{currency.format(Number(order.total_amount || 0))}</td>
+                    <td className="font-bold text-slate-950 text-[13.5px]">{order.customer_name}</td>
+                    <td className="font-extrabold text-slate-950 text-[13.5px] tabular-nums">{currency.format(Number(order.total_amount || 0))}</td>
                     <td><StatusBadge status={order.status} /></td>
                   </tr>
                 ))}
@@ -889,7 +956,7 @@ function ProductsPage() {
 
           <div className="mb-4 grid gap-2 sm:grid-cols-[1fr_auto]">
             <input value={search} onChange={(e) => updateProductFilters('search', e.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm" placeholder="Search SKU or product" aria-label="Search products" />
-            <select value={status} onChange={(e) => updateProductFilters('status', e.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm" aria-label="Filter product status">
+            <select value={status} onChange={(e) => updateProductFilters('status', e.target.value)} className="theme-select text-sm py-2 px-3" aria-label="Filter product status">
               <option value="all">All statuses</option><option value="active">Active</option><option value="inactive">Inactive</option>
             </select>
           </div>
@@ -1138,7 +1205,7 @@ function InventoryPage() {
           </div>
           <div className="mb-4 grid gap-2 sm:grid-cols-[1fr_auto]">
             <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm" placeholder="Search SKU or product" aria-label="Search inventory" />
-            <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm" aria-label="Filter inventory status">
+            <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }} className="theme-select text-sm py-2 px-3" aria-label="Filter inventory status">
               <option value="all">All stock</option><option value="low">Low stock</option><option value="healthy">Healthy</option><option value="inactive">Inactive</option>
             </select>
           </div>
@@ -1203,7 +1270,7 @@ function OrdersPage() {
   const notify = useNotify();
   const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
-  const [pendingOrderActionId, setPendingOrderActionId] = useState(null);
+  const [pendingOrderAction, setPendingOrderAction] = useState(null);
   const hasLoadedRef = useRef(false);
   const selectedStatus = searchParams.get('status') || 'all';
   const search = searchParams.get('search') || '';
@@ -1245,31 +1312,32 @@ function OrdersPage() {
 
   const handleStatusAdvance = async (order) => {
     const next = nextStatusMap[order.status];
-    if (!next || pendingOrderActionId !== null) return;
-    setPendingOrderActionId(order.id);
+    if (!next || pendingOrderAction !== null) return;
+    setPendingOrderAction({ id: order.id, type: 'advance', orderNumber: order.order_number });
     try {
       await updateOrderStatus(order.id, next);
       await loadOrders();
-      notify(`Order moved to ${next}`);
+      notify(`Order ${order.order_number} moved to ${next}`);
     } catch (err) {
       notify(err.message || 'Unable to update status', 'error');
     } finally {
-      setPendingOrderActionId(null);
+      setPendingOrderAction(null);
     }
   };
 
   const handleCancel = async (order) => {
-    if (!window.confirm(`Cancel order ${order.order_number}?`)) return;
-    if (pendingOrderActionId !== null) return;
-    setPendingOrderActionId(order.id);
+    if (!window.confirm(`Are you sure you want to cancel order ${order.order_number}?`)) return;
+    if (pendingOrderAction !== null) return;
+    setPendingOrderAction({ id: order.id, type: 'cancel', orderNumber: order.order_number });
+    notify(`Cancelling order ${order.order_number}… Please wait`);
     try {
       await cancelOrder(order.id);
       await loadOrders();
-      notify('Order cancelled successfully');
+      notify(`Order ${order.order_number} cancelled successfully`);
     } catch (err) {
       notify(err.message || 'Unable to cancel order', 'error');
     } finally {
-      setPendingOrderActionId(null);
+      setPendingOrderAction(null);
     }
   };
 
@@ -1278,10 +1346,17 @@ function OrdersPage() {
       <PageHeader title="Orders" subtitle="Track orders and status workflow" />
       {error && <div role="alert" className="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
 
+      {pendingOrderAction?.type === 'cancel' && (
+        <div className="mb-4 flex items-center gap-3 rounded-xl border border-rose-300 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-900 shadow-sm animate-pulse">
+          <Loader2 className="h-5 w-5 animate-spin text-rose-700 shrink-0" />
+          <span>Cancelling order {pendingOrderAction.orderNumber}… Processing inventory release and status update. Please wait.</span>
+        </div>
+      )}
+
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">Order list</h2>
-          <select value={selectedStatus} onChange={(e) => updateOrderFilters('status', e.target.value)} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+          <select value={selectedStatus} onChange={(e) => updateOrderFilters('status', e.target.value)} className="theme-select text-sm py-2 px-3">
             <option value="all">All statuses</option>
             <option value="PENDING">PENDING</option>
             <option value="CONFIRMED">CONFIRMED</option>
@@ -1308,22 +1383,54 @@ function OrdersPage() {
               <tbody className="divide-y divide-slate-200 bg-white">
                 {orders.map((order) => (
                   <tr key={order.id} className="hover:bg-slate-50">
-                    <td data-label="Order" className="px-3 py-3 text-sm font-medium text-[#446c55]"><Link to={`/orders/${order.id}`}>{order.order_number}</Link></td>
-                    <td data-label="Customer" className="px-3 py-3 text-sm text-slate-700">{order.customer_name}</td>
+                    <td data-label="Order" className="px-3 py-3 text-sm font-semibold text-[#143625]"><Link to={`/orders/${order.id}`} className="hover:underline font-mono">{order.order_number}</Link></td>
+                    <td data-label="Customer" className="px-3 py-3 text-sm font-bold text-slate-900">{order.customer_name}</td>
                     <td data-label="Date" className="px-3 py-3 text-sm text-slate-700">{new Date(order.created_at).toLocaleDateString()}</td>
-                    <td data-label="Total" className="px-3 py-3 text-sm text-slate-700">{currency.format(Number(order.total_amount || 0))}</td>
+                    <td data-label="Total" className="px-3 py-3 text-sm font-bold text-slate-900 tabular-nums">{currency.format(Number(order.total_amount || 0))}</td>
                     <td data-label="Status" className="px-3 py-3"><StatusBadge status={order.status} /></td>
                     <td data-label="Actions" className="space-x-2 px-3 py-3">
                       {nextStatusMap[order.status] && (
-                        <button type="button" disabled={pendingOrderActionId !== null} aria-live="polite" className="inline-flex items-center gap-1.5 rounded-lg bg-[#315b48] px-2.5 py-1.5 text-xs font-medium text-white transition hover:bg-[#26493e] disabled:cursor-wait disabled:opacity-70" onClick={() => handleStatusAdvance(order)}>
-                          {pendingOrderActionId === order.id && <RefreshCw className="h-3 w-3 animate-spin" aria-hidden="true" />}
-                          {pendingOrderActionId === order.id ? 'Updating…' : nextStatusMap[order.status]}
+                        <button
+                          type="button"
+                          disabled={pendingOrderAction !== null}
+                          aria-live="polite"
+                          className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold text-white transition shadow-sm ${
+                            pendingOrderAction?.id === order.id && pendingOrderAction?.type === 'advance'
+                              ? 'bg-[#1e382b] cursor-wait opacity-90 ring-2 ring-[#315b48]/40'
+                              : 'bg-[#315b48] hover:bg-[#26493e] disabled:opacity-50 disabled:cursor-not-allowed'
+                          }`}
+                          onClick={() => handleStatusAdvance(order)}
+                        >
+                          {pendingOrderAction?.id === order.id && pendingOrderAction?.type === 'advance' ? (
+                            <>
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                              <span>Updating…</span>
+                            </>
+                          ) : (
+                            <span>{nextStatusMap[order.status]}</span>
+                          )}
                         </button>
                       )}
                       {['PENDING', 'CONFIRMED'].includes(order.status) && (
-                        <button type="button" disabled={pendingOrderActionId !== null} aria-live="polite" className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-50 disabled:cursor-wait disabled:opacity-70" onClick={() => handleCancel(order)}>
-                          {pendingOrderActionId === order.id && <RefreshCw className="h-3 w-3 animate-spin" aria-hidden="true" />}
-                          {pendingOrderActionId === order.id ? 'Cancelling…' : 'Cancel'}
+                        <button
+                          type="button"
+                          disabled={pendingOrderAction !== null}
+                          aria-live="polite"
+                          className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold transition shadow-sm ${
+                            pendingOrderAction?.id === order.id && pendingOrderAction?.type === 'cancel'
+                              ? 'bg-rose-100 text-rose-900 border border-rose-400 ring-2 ring-rose-200 cursor-wait'
+                              : 'border border-rose-200 text-rose-700 bg-white hover:bg-rose-50 hover:border-rose-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                          }`}
+                          onClick={() => handleCancel(order)}
+                        >
+                          {pendingOrderAction?.id === order.id && pendingOrderAction?.type === 'cancel' ? (
+                            <>
+                              <Loader2 className="h-3.5 w-3.5 animate-spin text-rose-700" aria-hidden="true" />
+                              <span>Cancelling…</span>
+                            </>
+                          ) : (
+                            <span>Cancel</span>
+                          )}
                         </button>
                       )}
                     </td>
@@ -1341,16 +1448,58 @@ function OrdersPage() {
 
 function OrderDetailPage() {
   const { id } = useParams();
+  const notify = useNotify();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [actionLoading, setActionLoading] = useState(null);
+
+  const loadOrder = useCallback(() => {
+    return getOrder(id)
+      .then((data) => { setOrder(data); setError(''); })
+      .catch((err) => setError(err.message || 'Unable to load order details'));
+  }, [id]);
 
   useEffect(() => {
-    getOrder(id)
-      .then((data) => setOrder(data))
-      .catch((err) => setError(err.message || 'Unable to load order details'))
-      .finally(() => setLoading(false));
-  }, [id]);
+    loadOrder().finally(() => setLoading(false));
+  }, [loadOrder]);
+
+  const nextStatusMap = {
+    PENDING: 'CONFIRMED',
+    CONFIRMED: 'SHIPPED',
+    SHIPPED: 'DELIVERED'
+  };
+
+  const handleStatusAdvance = async () => {
+    const next = nextStatusMap[order?.status];
+    if (!next || actionLoading) return;
+    setActionLoading('advance');
+    try {
+      await updateOrderStatus(order.id, next);
+      await loadOrder();
+      notify(`Order ${order.order_number} moved to ${next}`);
+    } catch (err) {
+      notify(err.message || 'Unable to update status', 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (!window.confirm(`Are you sure you want to cancel order ${order?.order_number}?`)) return;
+    if (actionLoading) return;
+    setActionLoading('cancel');
+    notify(`Cancelling order ${order.order_number}… Please wait`);
+    try {
+      await cancelOrder(order.id);
+      await loadOrder();
+      notify(`Order ${order.order_number} cancelled successfully`);
+    } catch (err) {
+      notify(err.message || 'Unable to cancel order', 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
 
   if (loading) return <div className="rounded-2xl border border-slate-200 bg-white p-8 text-slate-500">Loading order details…</div>;
   if (error) return <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700">{error}</div>;
@@ -1358,7 +1507,37 @@ function OrderDetailPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title={`Order ${order.order_number}`} subtitle="Detailed order information" />
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <PageHeader title={`Order ${order.order_number}`} subtitle="Detailed order information" />
+        <div className="flex items-center gap-2.5">
+          {nextStatusMap[order.status] && (
+            <button
+              type="button"
+              disabled={actionLoading !== null}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#315b48] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#26493e] shadow-sm disabled:opacity-50"
+              onClick={handleStatusAdvance}
+            >
+              {actionLoading === 'advance' && <Loader2 className="h-4 w-4 animate-spin" />}
+              {actionLoading === 'advance' ? 'Updating…' : `Move to ${nextStatusMap[order.status]}`}
+            </button>
+          )}
+          {['PENDING', 'CONFIRMED'].includes(order.status) && (
+            <button
+              type="button"
+              disabled={actionLoading !== null}
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition shadow-sm ${
+                actionLoading === 'cancel'
+                  ? 'bg-rose-100 text-rose-900 border border-rose-400 ring-2 ring-rose-200 cursor-wait'
+                  : 'border border-rose-200 text-rose-700 bg-white hover:bg-rose-50 hover:border-rose-300 disabled:opacity-50'
+              }`}
+              onClick={handleCancel}
+            >
+              {actionLoading === 'cancel' && <Loader2 className="h-4 w-4 animate-spin text-rose-700" />}
+              {actionLoading === 'cancel' ? 'Cancelling…' : 'Cancel order'}
+            </button>
+          )}
+        </div>
+      </div>
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
@@ -1487,8 +1666,8 @@ function PlaceOrderPage() {
         <form onSubmit={submitOrder} className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">Customer</label>
-              <select value={customerId} onChange={(e) => setCustomerId(e.target.value)} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm">
+              <label className="mb-2 block text-sm font-semibold text-slate-700">Customer</label>
+              <select value={customerId} onChange={(e) => setCustomerId(e.target.value)} className="theme-select w-full text-sm py-2.5 px-3">
                 {customers.map((customer) => (
                   <option key={customer.id} value={customer.id}>{customer.name}</option>
                 ))}
@@ -1507,7 +1686,7 @@ function PlaceOrderPage() {
               const product = products.find((p) => String(p.id) === String(item.productId));
               return (
                 <div key={index} className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 md:grid-cols-[1.4fr_0.7fr_0.25fr]">
-                  <select value={item.productId} onChange={(e) => updateItem(index, 'productId', e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm">
+                  <select value={item.productId} onChange={(e) => updateItem(index, 'productId', e.target.value)} className="theme-select text-sm py-2.5 px-3">
                     <option value="">Select product</option>
                     {products.filter((productRow) => productRow.is_active === 1 && productRow.quantity_on_hand > 0).map((productRow) => (
                       <option key={productRow.id} value={productRow.id}>{productRow.name} ({productRow.sku})</option>

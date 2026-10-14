@@ -43,6 +43,50 @@ button {
   cursor: pointer;
 }
 
+/* StockFlow Brand Theme Select Dropdowns */
+select,
+.theme-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #f7faf7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2326493e' stroke-width='2.4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  background-size: 15px 15px;
+  padding-right: 34px !important;
+  color: #123323;
+  font-weight: 600;
+  border: 1px solid #c9d8ce;
+  border-radius: 12px;
+  transition: all .16s ease;
+  box-shadow: 0 1px 2px rgba(38, 73, 62, .04);
+  cursor: pointer;
+}
+
+select:hover,
+.theme-select:hover {
+  background-color: #ffffff;
+  border-color: #315b48;
+  box-shadow: 0 2px 6px rgba(38, 73, 62, .08);
+}
+
+select:focus,
+.theme-select:focus {
+  background-color: #ffffff;
+  border-color: #26493e;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(49, 91, 72, .18);
+}
+
+select option,
+.theme-select option {
+  background-color: #ffffff;
+  color: #0f172a;
+  font-weight: 500;
+  padding: 8px 12px;
+}
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
@@ -65,6 +109,7 @@ select:focus-visible {
   height: 100vh;
   border-color: #e8e9e2;
   background: rgba(253, 253, 250, .96);
+  transition: width .2s ease-in-out;
 }
 
 .brand-mark {
@@ -936,45 +981,50 @@ select:focus-visible {
 
 .dashboard-kpi {
   min-width: 0;
-  padding: 17px 18px 14px;
-  border: 1px solid #e8e9e2;
-  border-radius: 15px;
+  padding: 19px 20px 16px;
+  border: 1px solid #dce4da;
+  border-radius: 16px;
   background: #fff;
-  box-shadow: 0 3px 10px rgba(47, 58, 48, .025);
-  transition: transform .18s ease, box-shadow .18s ease;
+  box-shadow: 0 3px 12px rgba(47, 58, 48, .03);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
 .dashboard-kpi:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(47, 58, 48, .07);
+  border-color: #cbd8c8;
+  box-shadow: 0 10px 24px rgba(47, 58, 48, .08);
 }
 
 .dashboard-kpi-icon {
   display: grid;
-  width: 39px;
-  height: 39px;
+  width: 42px;
+  height: 42px;
   place-items: center;
   border-radius: 12px;
 }
 
 .kpi-icon-sage {
-  color: #466d57;
-  background: #edf3eb;
+  color: #244b36;
+  background: #edf5eb;
+  border: 1px solid #d3e5cf;
 }
 
 .kpi-icon-terracotta {
-  color: #b96951;
-  background: #fbefeb;
+  color: #a44830;
+  background: #fdf0ec;
+  border: 1px solid #fad2c7;
 }
 
 .kpi-icon-gold {
-  color: #aa7a3f;
-  background: #f7f1e7;
+  color: #946428;
+  background: #f9f2e6;
+  border: 1px solid #f2e2cb;
 }
 
 .kpi-icon-green {
-  color: #3d725e;
-  background: #eaf3ee;
+  color: #205c45;
+  background: #eaf5ee;
+  border: 1px solid #cce5d5;
 }
 
 .dashboard-chart-grid {
@@ -986,11 +1036,11 @@ select:focus-visible {
 
 .dashboard-panel {
   min-width: 0;
-  padding: 20px 21px;
-  border: 1px solid #e8e9e2;
+  padding: 22px 24px;
+  border: 1px solid #dce4da;
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 3px 10px rgba(47, 58, 48, .025);
+  box-shadow: 0 3px 12px rgba(47, 58, 48, .03);
 }
 
 .panel-heading {
@@ -1002,24 +1052,25 @@ select:focus-visible {
 
 .panel-overline {
   margin: 0 0 5px;
-  color: #89958c;
-  font-size: 9px;
-  font-weight: 700;
+  color: #3b4d42;
+  font-size: 10px;
+  font-weight: 800;
   letter-spacing: .16em;
 }
 
 .panel-heading h2 {
   margin: 0;
-  color: #293a30;
-  font-size: 17px;
-  font-weight: 650;
+  color: #12281c;
+  font-size: 20px;
+  font-weight: 750;
   letter-spacing: -.025em;
 }
 
 .panel-subtitle {
   margin: 4px 0 0;
-  color: #89928c;
-  font-size: 11px;
+  color: #6d7870;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .chart-summary {
@@ -1258,18 +1309,18 @@ select:focus-visible {
 }
 
 .dashboard-table th {
-  padding: 10px 11px;
-  color: #89958c;
-  font-size: 9px;
-  font-weight: 650;
-  letter-spacing: .1em;
+  padding: 12px 14px;
+  color: #2b3b31;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: .08em;
   white-space: nowrap;
 }
 
 .dashboard-table td {
-  padding: 11px;
-  border-bottom: 1px solid #f0f1ed;
-  font-size: 11px;
+  padding: 14px 14px;
+  border-bottom: 1px solid #edf1eb;
+  font-size: 13.5px;
   white-space: nowrap;
 }
 
@@ -1278,18 +1329,31 @@ select:focus-visible {
 }
 
 .dashboard-table tbody tr:hover {
-  background: #fbfcfa;
+  background: #f6f9f6;
 }
 
 .dashboard-order-link {
-  color: #446c55;
-  font-weight: 650;
+  color: #103020;
+  font-weight: 750;
+  font-size: 13.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: -0.01em;
   text-decoration: none;
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #edf5ef;
+  border: 1px solid #c6decc;
+  box-shadow: 0 1px 2px rgba(16, 48, 32, .04);
+  transition: all .15s ease;
 }
 
 .dashboard-order-link:hover {
-  color: #233f30;
-  text-decoration: underline;
+  background: #deeee2;
+  color: #071910;
+  border-color: #abd0b4;
+  box-shadow: 0 2px 4px rgba(16, 48, 32, .08);
+  text-decoration: none;
 }
 
 .stock-alert-list {
